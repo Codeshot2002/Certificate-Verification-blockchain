@@ -1,0 +1,19 @@
+.rounded-box{
+    width:fit-content;
+    height: fit-content;
+
+    margin-left:auto;
+    margin-right: auto;
+    background-color: white;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+.home-container {
+    background: linear-gradient(to right, #6c70f2, #9c9ff7);
+    padding: 2vh;
+    width: 100vw; 
+    height: 100vh;
+    margin: auto;
+}
