@@ -3,12 +3,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 import InputControl from "../InputControl/InputControl";
-import { auth } from "../../firebase";
+import { auth,db } from "../../firebase";
+import {collection, addDoc, setDoc, doc} from "firebase/firestore"
 
 import styles from "./Signup.module.css";
 
 function Signup() {
+  const getRole = () => {
+    const role_value = () => document.querySelector('input[name="flexRadioDefault"]:checked').value;
+    return role_value() === "option1" ? "student" : "institution";
+  }
+
   const navigate = useNavigate();
+
   const [values, setValues] = useState({
     name: "",
     email: "",
@@ -19,6 +26,7 @@ function Signup() {
   const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
 
   const handleSubmission = () => {
+ 
     if (!values.name || !values.email || !values.instituion || !values.pass) {
       setErrorMsg("Fill all fields");
       return;
@@ -29,13 +37,25 @@ function Signup() {
     createUserWithEmailAndPassword(auth, values.email, values.pass)
       .then(async (res) => {
         setSubmitButtonDisabled(false);
-        const user = res.user;
-        const displayN = values.name + "_" + values.instituion;
-        await updateProfile(user, {
-          displayName: displayN,
-
+        await updateProfile(res.user, {
+          displayName: values.name,
         });
         navigate("/");
+
+        //Sending data to the firestore database
+        try {
+          // Use res.user.uid as the document ID
+          const new_user = await setDoc(doc(db, "users", res.user.uid), {
+            name: values.name,
+            email: values.email,
+            role: getRole(),
+            instituion: values.instituion,
+            password: values.pass,
+          });
+          console.log("Document written with ID: ", res.user.uid);
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
       })
       .catch((err) => {
         setSubmitButtonDisabled(false);
@@ -62,6 +82,32 @@ function Signup() {
             setValues((prev) => ({ ...prev, email: event.target.value }))
           }
         />
+        <>
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="flexRadioDefault"
+              id="flexRadioDefault1"
+            />
+            <label className="form-check-label" htmlFor="flexRadioDefault1">
+              Student/Employer
+            </label>
+          </div>
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="flexRadioDefault"
+              id="flexRadioDefault2"
+              defaultChecked=""
+            />
+            <label className="form-check-label" htmlFor="flexRadioDefault2">
+              Instituition
+            </label>
+          </div>
+        </>
+
         <InputControl
           label="Instituion"
           placeholder="Enter Institution Name"

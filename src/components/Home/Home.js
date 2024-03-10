@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import './homeStyles.css';
 import LogOut from "../LogOut/LogOut";
+import Navbar from "../NavBar/Navbar";
 
 
 function Home(props) {
+
+
   return (
+    <>
+    <Navbar/>
     <div className="home-container">
       <div className="rounded-box">
         <h1>
@@ -21,6 +26,7 @@ function Home(props) {
       </div>
 
     </div>
+    </>
   );
 }
 

@@ -4,11 +4,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
+import Instituition from "./components/instituition/Instituition";
 
 import { auth } from "./firebase";
 
 import "./App.css";
 import Navbar from "../src/components/NavBar/Navbar"
+import Verify from "./components/instituition/Verify";
+import Student from "./components/instituition/Student";
 
 function App() {
   const [userName, setUserName] = useState("");
@@ -23,12 +26,14 @@ function App() {
 
   return (
     <>
-    <Navbar/>
     <div className="App">
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/instituition" element={<Instituition />} />
+          <Route path="/student" element={<Student />} />
+
           <Route path="/" element={<Home name={userName} />} />
         </Routes>
       </Router>

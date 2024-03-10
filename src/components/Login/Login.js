@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 import InputControl from "../InputControl/InputControl";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
+
 
 import styles from "./Login.module.css";
+import { collection, doc, getDoc  } from "firebase/firestore";
 
 function Login() {
+
   const navigate = useNavigate();
   const [values, setValues] = useState({
     email: "",
@@ -26,9 +29,28 @@ function Login() {
     setSubmitButtonDisabled(true);
     signInWithEmailAndPassword(auth, values.email, values.pass)
       .then(async (res) => {
+
+        // Get the user's ID
+        const userId = res.user.uid;
+        console.log(userId)
+        // Fetch the user's document from the database
+        const userDocRef = doc(db, 'users', userId);
+        const userDocSnap = await getDoc(userDocRef);
+        console.log(userDocSnap.data());
+        if (userDocSnap.exists()) {
+          // Retrieve the role from the user's document
+          const userRole = userDocSnap.data().role;
+          console.log(userRole);
+          if(userRole === "institution"){
+            navigate("/instituition");
+          }else{
+            navigate("/student");
+          }
+        } else {
+          console.log("User document not found!");
+          navigate("/")
+        }
         setSubmitButtonDisabled(false);
-        
-        navigate("/");
       })
       .catch((err) => {
         setSubmitButtonDisabled(false);
